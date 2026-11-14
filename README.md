@@ -22,15 +22,21 @@ docs/       схемы (концептуальная, логическая, фи
 ## Как развернуть базу у себя
 
 1. Установить PostgreSQL (16 или новее) и pgAdmin или DBeaver.
-2. Скачать данные Berka и положить 8 файлов в `data/raw/`:
-   `account`, `client`, `disp`, `order`, `trans`, `loan`, `card`, `district` (`.asc`, разделитель `;`).
-   Источник: архив соревнования PKDD'99 или копия «Berka dataset» на Kaggle.
+2. Скачать данные Berka одной командой (PowerShell, из корня репозитория):
+   ```
+   powershell -ExecutionPolicy Bypass -File scripts\download_data.ps1
+   ```
+   Скрипт кладёт 8 файлов (`account`, `client`, `disp`, `order`, `trans`, `loan`, `card`, `district`, `.asc`)
+   и описание полей `Financial Data description.pdf` в `data/raw/`.
+   Источник: копия датасета PKDD'99 на GitHub — https://github.com/jlacko/berka-dataset
    Описание полей: https://relational.fel.cvut.cz/dataset/Financial
 3. Создать пустую базу, например `bank`.
 4. Из корня репозитория запустить скрипты из `sql/` по порядку номеров:
    ```
-   psql -d bank -f sql/00_....sql
+   psql -U postgres -d bank -f sql/00_raw_schema.sql
+   psql -U postgres -d bank -f sql/01_load_raw.sql
    ```
+   В конце `01_load_raw.sql` выводит число строк в каждой таблице (в `trans` должно быть 1 056 320).
 
 ## План работ
 
